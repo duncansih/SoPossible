@@ -26,6 +26,42 @@ Guidance for Claude Code (and any other agent) working in this repository.
 - A toggle for light and dark theme, with the choice remembered
   across visits.
 
+## Design Direction (standing rule — apply to every screen)
+
+Visual direction is settled: **"Terminal Lab"** — dark-mode-first, techy,
+monospace-accented. Every section of the portal, including tools added
+later, follows this look automatically; don't re-derive or vary it per
+tool.
+
+- **Typography**: `Space Grotesk` (500/600/700) for headings and UI chrome;
+  `JetBrains Mono` (400/500/700) for nav items, data readouts/labels,
+  buttons, and any code-like or comment-style text (`// ...`, `# ...`).
+  Both via Google Fonts.
+- **Palette** (defined as light/dark pairs, dark is the default state):
+  - Dark: `bg oklch(14% 0.015 260)` · `text oklch(92% 0.02 200)` ·
+    `subtext oklch(64% 0.03 210)` · `card-bg oklch(19% 0.02 260)` ·
+    `card-border oklch(32% 0.02 260)` · `grid-line oklch(28% 0.02 260 / 55%)`
+  - Light: `bg oklch(96% 0.01 260)` · `text oklch(18% 0.02 260)` ·
+    `subtext oklch(45% 0.02 255)` · `card-bg oklch(100% 0.005 260)` ·
+    `card-border oklch(85% 0.02 260)` · `grid-line oklch(88% 0.01 260 / 70%)`
+  - Accents (same in both modes for now): `accent` neon cyan `#4dd6d6`,
+    `accent2` neon magenta `#e069c7` — alternate between them for
+    labels/values so nothing reads monotone.
+- **Spacing/shape**: small corner radii only (2–4px, never pill/fully
+  rounded), 1px hairline borders in `card-border`, generous card padding
+  (~28px), section cards labeled with a small monospace tag overlapping
+  the top border (`SECTION://...`) like a fieldset legend.
+- **Signature motifs**: a terminal-window chrome bar at the very top
+  (three dot "window controls" + `learning-lab@sp-poly:~$` prompt label);
+  page heading prefixed with `>` in accent color, suffixed with a blinking
+  monospace cursor (`_`); subtle repeating-grid background (32px cells,
+  `grid-line` color); nav items as `[01] item-name` with the bracketed
+  number colored accent/accent2; buttons styled as CLI commands (e.g.
+  `$ generate --palette`); slider thumbs as small glowing diamonds
+  (rotated square, `box-shadow` glow in the accent color).
+- **Theme toggle**: implemented as a bordered button reading `--light` /
+  `--dark` (monospace), not just an icon.
+
 ## Working conventions
 - Before implementing any non-trivial feature, ask clarifying
   questions about scope, edge cases, and constraints first —
@@ -36,7 +72,8 @@ Guidance for Claude Code (and any other agent) working in this repository.
 ### Phase 1 — Portal skeleton + 2 tools (in progress)
 Single `index.html`, Tailwind CDN, top nav of anchor links to each tool
 section (pattern future tools follow). Site title is a placeholder
-("Web Tools & Learning Lab") for now.
+("Web Tools & Learning Lab") for now. Styled per "Design Direction"
+above (Terminal Lab).
 
 - [ ] Shell: header, placeholder title, anchor nav, footer
 - [ ] Dark/light theme toggle, persisted, no flash-of-wrong-theme on load
