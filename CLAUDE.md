@@ -77,9 +77,8 @@ above (Terminal Lab).
 
 - [x] Shell: header, placeholder title, anchor nav, footer
 - [x] Dark/light theme toggle, persisted, no flash-of-wrong-theme on load
-- [ ] Tool 1: Atmospheric Altitude Explorer — slider (0–600km, non-linear
+- [x] Tool 1: Atmospheric Altitude Explorer — slider (0–600km, non-linear
       scale) → layer name, approx. temperature, one-line fact
-      (card shell + open/close wired; interactive logic pending)
 - [ ] Tool 2: Color Palette Generator — generate 5 random hex swatches,
       click a swatch to copy its hex
       (card shell + open/close wired; interactive logic pending)

@@ -34,10 +34,12 @@
       linear-gradient(90deg, oklch(28% 0.02 260 / 55%) 1px, transparent 1px);
   }
 
-  /* reserved for a later phase's altitude slider */
-  .dc-range { -webkit-appearance: none; appearance: none; height: 2px; outline: none; }
-  .dc-range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; transform: rotate(45deg); cursor: pointer; }
-  .dc-range::-moz-range-thumb { width: 14px; height: 14px; transform: rotate(45deg); cursor: pointer; border: none; }
+  /* altitude slider (Tool 1) */
+  .dc-range { -webkit-appearance: none; appearance: none; height: 2px; outline: none; background: none; }
+  .dc-range::-webkit-slider-runnable-track { height: 2px; border-radius: 999px; background: currentColor; opacity: .35; }
+  .dc-range::-moz-range-track { height: 2px; border-radius: 999px; background: currentColor; opacity: .35; }
+  .dc-range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -6px; transform: rotate(45deg); cursor: pointer; background: currentColor; box-shadow: 0 0 8px currentColor; }
+  .dc-range::-moz-range-thumb { width: 14px; height: 14px; transform: rotate(45deg); cursor: pointer; border: none; background: currentColor; box-shadow: 0 0 8px currentColor; }
 </style>
 </head>
 <body class="bg-grid bg-[oklch(96%_0.01_260)] dark:bg-[oklch(14%_0.015_260)] text-[oklch(18%_0.02_260)] dark:text-[oklch(92%_0.02_200)] font-['Space_Grotesk',sans-serif] min-h-screen">
@@ -85,9 +87,24 @@
       </div>
       <div id="altitude-explorer-body" class="mt-3">
         <p class="text-sm text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)] max-w-xl leading-relaxed">Drag the slider to climb from the ground up — see how the layer and temperature change as you rise through the atmosphere.</p>
-        <div class="mt-5 border border-dashed border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] rounded-sm px-4 py-3 font-['JetBrains_Mono',monospace] text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">
-          // tool preview — logic coming in a later phase
+
+        <input type="range" id="altitude-slider" class="dc-range text-[#4dd6d6] w-full max-w-md block mt-6" min="0" max="1000" step="1" value="350" aria-label="Altitude">
+
+        <div aria-live="polite" class="mt-6 flex flex-wrap gap-8 font-['JetBrains_Mono',monospace]">
+          <div>
+            <div class="text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">ALT_KM</div>
+            <div id="altitude-value" class="text-xl font-bold text-[#4dd6d6]">0.0</div>
+          </div>
+          <div>
+            <div class="text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">LAYER</div>
+            <div id="altitude-layer" class="text-xl font-bold">TROPOSPHERE</div>
+          </div>
+          <div>
+            <div class="text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">TEMP_C</div>
+            <div id="altitude-temp" class="text-xl font-bold text-[#e069c7]">0.0</div>
+          </div>
         </div>
+        <p id="altitude-fact" class="mt-4 text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)] max-w-xl leading-relaxed font-['JetBrains_Mono',monospace]">// where nearly all weather happens</p>
       </div>
     </section>
 
@@ -157,6 +174,63 @@
         if (body) body.hidden = true;
       });
     });
+
+    // Atmospheric Altitude Explorer
+    var TEMP_POINTS = [
+      [0, 15], [11, -56.5], [20, -56.5], [32, -44.5], [47, -2.5],
+      [51, -2.5], [71, -58.5], [85, -86.3], [100, -78],
+      [120, 0], [200, 500], [300, 800], [600, 1500]
+    ];
+    var LAYERS = [
+      { max: 12, name: 'Troposphere', fact: 'where nearly all weather happens' },
+      { max: 50, name: 'Stratosphere', fact: 'contains the ozone layer, which warms this layer with altitude' },
+      { max: 85, name: 'Mesosphere', fact: 'the coldest layer in the atmosphere; most meteors burn up here' },
+      { max: 600, name: 'Thermosphere', fact: 'air is extremely thin; kinetic temperature rises sharply, but it wouldn\'t feel hot due to the near-vacuum' }
+    ];
+
+    function sliderToAltitude(t) {
+      return 600 * Math.pow(t / 1000, 3);
+    }
+
+    function interpolateTemp(altKm) {
+      for (var i = 1; i < TEMP_POINTS.length; i++) {
+        if (altKm <= TEMP_POINTS[i][0]) {
+          var x0 = TEMP_POINTS[i - 1][0], y0 = TEMP_POINTS[i - 1][1];
+          var x1 = TEMP_POINTS[i][0], y1 = TEMP_POINTS[i][1];
+          var f = (altKm - x0) / (x1 - x0);
+          return y0 + f * (y1 - y0);
+        }
+      }
+      return TEMP_POINTS[TEMP_POINTS.length - 1][1];
+    }
+
+    function layerFor(altKm) {
+      for (var i = 0; i < LAYERS.length; i++) {
+        if (altKm <= LAYERS[i].max) return LAYERS[i];
+      }
+      return LAYERS[LAYERS.length - 1];
+    }
+
+    var altitudeSlider = document.getElementById('altitude-slider');
+    var altitudeValueEl = document.getElementById('altitude-value');
+    var altitudeLayerEl = document.getElementById('altitude-layer');
+    var altitudeTempEl = document.getElementById('altitude-temp');
+    var altitudeFactEl = document.getElementById('altitude-fact');
+
+    function updateAltitudeReadout() {
+      var alt = sliderToAltitude(Number(altitudeSlider.value));
+      var layer = layerFor(alt);
+      var temp = interpolateTemp(alt);
+      altitudeValueEl.textContent = alt.toFixed(1);
+      altitudeLayerEl.textContent = layer.name.toUpperCase();
+      altitudeTempEl.textContent = temp.toFixed(1);
+      altitudeFactEl.textContent = '// ' + layer.fact;
+    }
+
+    if (altitudeSlider) {
+      altitudeSlider.addEventListener('input', updateAltitudeReadout);
+      updateAltitudeReadout();
+    }
   })();
 </script>
 </body>
