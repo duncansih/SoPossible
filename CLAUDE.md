@@ -75,12 +75,14 @@ section (pattern future tools follow). Site title is a placeholder
 ("Web Tools & Learning Lab") for now. Styled per "Design Direction"
 above (Terminal Lab).
 
-- [ ] Shell: header, placeholder title, anchor nav, footer
-- [ ] Dark/light theme toggle, persisted, no flash-of-wrong-theme on load
+- [x] Shell: header, placeholder title, anchor nav, footer
+- [x] Dark/light theme toggle, persisted, no flash-of-wrong-theme on load
 - [ ] Tool 1: Atmospheric Altitude Explorer — slider (0–600km, non-linear
       scale) → layer name, approx. temperature, one-line fact
+      (card shell + open/close wired; interactive logic pending)
 - [ ] Tool 2: Color Palette Generator — generate 5 random hex swatches,
       click a swatch to copy its hex
+      (card shell + open/close wired; interactive logic pending)
 
 ### Phase 2+ — Add more tools (not yet scoped)
 Each new tool = one new `<section id="...">` following the Phase 1 shape
@@ -103,6 +105,12 @@ Everything is client-side, in `index.html`, no backend:
 ### Key flows
 - **Theme toggle**: click → flip `dark` class on `<html>` → write choice
   to `localStorage`.
+- **Nav open/close**: click a nav link → open its card if closed → smooth
+  scroll to it. Click a card's close control → hide its body (card stays
+  in the page, collapsed to its header). Visibility uses the native
+  `hidden` attribute (via `setAttribute`/`removeAttribute`, not the `.hidden`
+  DOM property — that property doesn't reliably reflect back to the
+  attribute on SVG elements) so it works even if Tailwind fails to load.
 - **Altitude slider**: drag → map slider position through a cubic curve to
   an altitude (km) → interpolate temperature from the reference table →
   look up layer/fact by altitude → update the readout.

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Tools &amp; Learning Lab</title>
+<script>
+  (function () {
+    var stored = localStorage.getItem('theme');
+    var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var dark = stored ? stored === 'dark' : prefersDark;
+    if (dark) document.documentElement.classList.add('dark');
+  })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { darkMode: 'class' };
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  html, body { margin: 0; scroll-behavior: smooth; }
+
+  @keyframes blink { 0%, 45% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(oklch(88% 0.01 260 / 70%) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(88% 0.01 260 / 70%) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .dark .bg-grid {
+    background-image:
+      linear-gradient(oklch(28% 0.02 260 / 55%) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(28% 0.02 260 / 55%) 1px, transparent 1px);
+  }
+
+  /* reserved for a later phase's altitude slider */
+  .dc-range { -webkit-appearance: none; appearance: none; height: 2px; outline: none; }
+  .dc-range::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; transform: rotate(45deg); cursor: pointer; }
+  .dc-range::-moz-range-thumb { width: 14px; height: 14px; transform: rotate(45deg); cursor: pointer; border: none; }
+</style>
+</head>
+<body class="bg-grid bg-[oklch(96%_0.01_260)] dark:bg-[oklch(14%_0.015_260)] text-[oklch(18%_0.02_260)] dark:text-[oklch(92%_0.02_200)] font-['Space_Grotesk',sans-serif] min-h-screen">
+
+  <div class="flex items-center gap-2 px-5 py-3 border-b border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)]">
+    <span class="w-2.5 h-2.5 rounded-full bg-[oklch(45%_0.02_255)] dark:bg-[oklch(64%_0.03_210)] opacity-40"></span>
+    <span class="w-2.5 h-2.5 rounded-full bg-[oklch(45%_0.02_255)] dark:bg-[oklch(64%_0.03_210)] opacity-40"></span>
+    <span class="w-2.5 h-2.5 rounded-full bg-[oklch(45%_0.02_255)] dark:bg-[oklch(64%_0.03_210)] opacity-40"></span>
+    <span class="ml-2.5 font-['JetBrains_Mono',monospace] text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">learning-lab@sp-poly:~$</span>
+  </div>
+
+  <header class="flex items-start justify-between gap-6 px-6 sm:px-12 pt-9 pb-5 flex-wrap">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-bold">
+        <span class="text-[#4dd6d6]">&gt;</span> Web Tools &amp; Learning Lab<span class="inline-block text-[#4dd6d6] animate-[blink_1.1s_steps(1)_infinite]">_</span>
+      </h1>
+      <p class="mt-2 font-['JetBrains_Mono',monospace] text-sm text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]"># a growing collection of small web tools and learning artifacts</p>
+    </div>
+    <button id="theme-toggle" type="button"
+      class="flex items-center gap-2 px-3.5 py-2 rounded-sm border border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] bg-[oklch(100%_0.005_260)] dark:bg-[oklch(19%_0.02_260)] font-['JetBrains_Mono',monospace] text-xs hover:border-[#4dd6d6] transition-colors">
+      <svg id="icon-sun" hidden width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>
+      <svg id="icon-moon" hidden width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+      <span id="theme-toggle-label">--dark</span>
+    </button>
+  </header>
+
+  <nav class="flex flex-col gap-0.5 px-6 sm:px-12 pb-6 font-['JetBrains_Mono',monospace] text-sm max-w-md">
+    <a href="#altitude-explorer" data-nav-target="altitude-explorer" class="tool-nav-link px-2.5 py-2 rounded-sm hover:bg-[oklch(100%_0.005_260)] dark:hover:bg-[oklch(19%_0.02_260)] transition-colors">
+      <span class="text-[#4dd6d6]">[01]</span> altitude-explorer
+    </a>
+    <a href="#color-palette-generator" data-nav-target="color-palette-generator" class="tool-nav-link px-2.5 py-2 rounded-sm hover:bg-[oklch(100%_0.005_260)] dark:hover:bg-[oklch(19%_0.02_260)] transition-colors">
+      <span class="text-[#e069c7]">[02]</span> color-palette-generator
+    </a>
+  </nav>
+
+  <main class="px-6 sm:px-12 pb-12 flex flex-col gap-6">
+
+    <section id="altitude-explorer" class="relative rounded border border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] bg-[oklch(100%_0.005_260)] dark:bg-[oklch(19%_0.02_260)] p-7">
+      <span class="absolute -top-2.5 left-5 px-2 bg-[oklch(96%_0.01_260)] dark:bg-[oklch(14%_0.015_260)] font-['JetBrains_Mono',monospace] text-xs text-[#4dd6d6]">SECTION://altitude-explorer</span>
+      <div class="flex items-start justify-between gap-4">
+        <h2 class="text-xl font-semibold mt-1">Atmospheric Altitude Explorer</h2>
+        <button type="button" data-close-target="altitude-explorer" aria-label="Close" class="tool-close-btn shrink-0 p-1.5 rounded-sm border border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] hover:border-[#4dd6d6] transition-colors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        </button>
+      </div>
+      <div id="altitude-explorer-body" class="mt-3">
+        <p class="text-sm text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)] max-w-xl leading-relaxed">Drag the slider to climb from the ground up — see how the layer and temperature change as you rise through the atmosphere.</p>
+        <div class="mt-5 border border-dashed border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] rounded-sm px-4 py-3 font-['JetBrains_Mono',monospace] text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">
+          // tool preview — logic coming in a later phase
+        </div>
+      </div>
+    </section>
+
+    <section id="color-palette-generator" class="relative rounded border border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] bg-[oklch(100%_0.005_260)] dark:bg-[oklch(19%_0.02_260)] p-7">
+      <span class="absolute -top-2.5 left-5 px-2 bg-[oklch(96%_0.01_260)] dark:bg-[oklch(14%_0.015_260)] font-['JetBrains_Mono',monospace] text-xs text-[#e069c7]">SECTION://color-palette</span>
+      <div class="flex items-start justify-between gap-4">
+        <h2 class="text-xl font-semibold mt-1">Color Palette Generator</h2>
+        <button type="button" data-close-target="color-palette-generator" aria-label="Close" class="tool-close-btn shrink-0 p-1.5 rounded-sm border border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] hover:border-[#e069c7] transition-colors">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+        </button>
+      </div>
+      <div id="color-palette-generator-body" class="mt-3">
+        <p class="text-sm text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)] max-w-xl leading-relaxed">Every click makes five new random colors. Click a swatch to copy its hex code.</p>
+        <div class="mt-5 border border-dashed border-[oklch(85%_0.02_260)] dark:border-[oklch(32%_0.02_260)] rounded-sm px-4 py-3 font-['JetBrains_Mono',monospace] text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]">
+          // tool preview — logic coming in a later phase
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="px-6 sm:px-12 pb-10 font-['JetBrains_Mono',monospace] text-xs text-[oklch(45%_0.02_255)] dark:text-[oklch(64%_0.03_210)]"># more tools coming soon</footer>
+
+<script>
+  (function () {
+    var html = document.documentElement;
+    var toggleBtn = document.getElementById('theme-toggle');
+    var label = document.getElementById('theme-toggle-label');
+    var iconSun = document.getElementById('icon-sun');
+    var iconMoon = document.getElementById('icon-moon');
+
+    function setHidden(el, isHidden) {
+      if (isHidden) el.setAttribute('hidden', '');
+      else el.removeAttribute('hidden');
+    }
+
+    function syncToggleUI() {
+      var dark = html.classList.contains('dark');
+      label.textContent = dark ? '--light' : '--dark';
+      setHidden(iconSun, !dark);
+      setHidden(iconMoon, dark);
+    }
+
+    toggleBtn.addEventListener('click', function () {
+      var dark = html.classList.toggle('dark');
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+      syncToggleUI();
+    });
+
+    syncToggleUI();
+
+    document.querySelectorAll('.tool-nav-link').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var id = link.getAttribute('data-nav-target');
+        var body = document.getElementById(id + '-body');
+        if (body) body.hidden = false;
+        var section = document.getElementById(id);
+        if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    document.querySelectorAll('.tool-close-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-close-target');
+        var body = document.getElementById(id + '-body');
+        if (body) body.hidden = true;
+      });
+    });
+  })();
+</script>
+</body>
+</html>
