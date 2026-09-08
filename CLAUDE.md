@@ -30,3 +30,46 @@ Guidance for Claude Code (and any other agent) working in this repository.
 - Before implementing any non-trivial feature, ask clarifying
   questions about scope, edge cases, and constraints first —
   don't propose a plan until you've asked.
+
+## Feature Plan
+
+### Phase 1 — Portal skeleton + 2 tools (in progress)
+Single `index.html`, Tailwind CDN, top nav of anchor links to each tool
+section (pattern future tools follow). Site title is a placeholder
+("Web Tools & Learning Lab") for now.
+
+- [ ] Shell: header, placeholder title, anchor nav, footer
+- [ ] Dark/light theme toggle, persisted, no flash-of-wrong-theme on load
+- [ ] Tool 1: Atmospheric Altitude Explorer — slider (0–600km, non-linear
+      scale) → layer name, approx. temperature, one-line fact
+- [ ] Tool 2: Color Palette Generator — generate 5 random hex swatches,
+      click a swatch to copy its hex
+
+### Phase 2+ — Add more tools (not yet scoped)
+Each new tool = one new `<section id="...">` following the Phase 1 shape
+(heading, short blurb, tool markup, scoped `<script>` logic) + one new
+`<li>` in the top nav. No dedicated phase entry needed until a specific
+tool is scoped with the user.
+
+### Data model
+Everything is client-side, in `index.html`, no backend:
+- **Theme**: single `localStorage` key (`theme`: `"light"` | `"dark"`),
+  read before first paint to set the `dark` class on `<html>`.
+- **Atmosphere reference table**: JS array of `{altitudeKm, tempC}` points
+  (0 → 600km) used for piecewise-linear interpolation, plus a small lookup
+  of layer boundaries → `{name, fact}` (troposphere/stratosphere/
+  mesosphere/thermosphere). Thermosphere values above ~100km are
+  illustrative, not precise.
+- **Palette state**: transient in-memory array of 5 hex strings, rebuilt
+  each "Generate" click; not persisted.
+
+### Key flows
+- **Theme toggle**: click → flip `dark` class on `<html>` → write choice
+  to `localStorage`.
+- **Altitude slider**: drag → map slider position through a cubic curve to
+  an altitude (km) → interpolate temperature from the reference table →
+  look up layer/fact by altitude → update the readout.
+- **Palette generate/copy**: click Generate → produce 5 random hex colors
+  → render swatches (also run once on page load). Click a swatch →
+  `navigator.clipboard.writeText(hex)` → show "Copied!" on that swatch for
+  ~1.5s.
